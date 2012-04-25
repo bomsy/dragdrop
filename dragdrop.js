@@ -3,13 +3,17 @@
 // 17/04/2012
 // A simple library to easily implement drag and drop functionality.
 // Cross browser compatibility and functionality
-// Currently supports ie9+,chrome, firefox, opera and safari
-// can replace html5 drag and drop 
+// Currently supports ie7,ie8,ie9+,chrome, firefox, opera and safari
+// can replace html5 drag and drop
+
+// v 1.0.0 - hbm - 17/04/2012 - release basic with support for ie9+
+// v 1.0.1 - hbm - 18/04/2012 - chrome,safari, firefox and opera basic working
+// v 1.0.2 - hbm - 23/04/2012 - ie7,ie8 support
 //**********************************************************
 if (!this.DRAGDROP) {
 	DRAGDROP = (function (e) {
 		e = e || window.event; //make sure the window event is set
-
+		var tagElements;
 		var _moveHorizontal = true,
 			_moveVertical = true;
 
@@ -26,17 +30,19 @@ if (!this.DRAGDROP) {
 
 
 		_onMouseDown = function (e) {
+			console.log("mousedown");
 			var src = e.srcElement || e.target;
 			var style;
 			if (src.className === "drag") {
 				_dragObject = src;
 				_offsetX = e.clientX;
 				_offsetY = e.clientY;
-				style = document.defaultView.getComputedStyle(_dragObject, null)
+
 				if (typeof _dragObject.currentStyle !== "undefined") {
 					_startX = parseInt(_dragObject.currentStyle.left); //ie
 					_startY = parseInt(_dragObject.currentStyle.top); //ie
 				} else {
+					style = document.defaultView.getComputedStyle(_dragObject, null);
 					_startX = parseInt(style.getPropertyValue("left")); //chrome
 					_startY = parseInt(style.getPropertyValue("top")); //chrome
 				}
@@ -54,6 +60,7 @@ if (!this.DRAGDROP) {
 		};
 
 		_onMouseMove = function (e) {
+			console.log("mousemove")
 			var elementBelow = null;
 			if (_dragObject && _drag) {
 				if (_moveVertical) {
@@ -76,9 +83,9 @@ if (!this.DRAGDROP) {
 		};
 
 		_onMouseUp = function (e) {
+			console.log("mouseup");
 			var dropElement = null;
 			if (_dragObject && _drag) {
-				console.log(_dragObject);
 				_positionDragElements(_dragObject, false);
 				dropElement = _getElementBelowDrag(e, _dragObject);
 				if (typeof DRAGDROP.onDrop === 'function') {
@@ -94,6 +101,9 @@ if (!this.DRAGDROP) {
 				_dragObject = null;
 			}
 			return false;
+		};
+		_onClick = function (e) {
+
 		};
 
 		_getElementBelowDrag = function (e, dragElement) {
@@ -112,7 +122,6 @@ if (!this.DRAGDROP) {
 			} else {
 				element.style.opacity = "1.0";
 				element.style.zIndex = 500;
-
 			}
 			element.style.position = "absolute";
 			element.style.cursor = "move";
@@ -130,15 +139,28 @@ if (!this.DRAGDROP) {
 		};
 
 		_removeEvent = function (element, event, handler) {
-			if (document.removeEvent) {
-				element.removeEvent("on" + event, handler); //ie
+			if (document.detachEvent) {
+				element.detachEvent("on" + event, handler); //ie
 			} else {
 				element.removeEventListener(event, handler, false);
 			}
 		};
 
 		//get the drag and drop elements
-		_draggables = document.getElementsByClassName("drag");
+		if (document.getElementsByClassName) { //ie9+, chrome
+			_draggables = document.getElementsByClassName("drag");
+		} else if (document.querySelectorAll) { //ie8
+			_draggables = document.querySelectorAll(".drag")
+		} else { //ie7
+			var arrs = [];
+			tagElements = document.getElementsByTagName("div");
+			for (var x = 0; x < tagElements.length; x++) {
+				if (tagElements[x].getAttribute("className")=== "drag") {
+					arrs.push(tagElements[x]);
+				}
+			}
+			_draggables = arrs;
+		}
 		//attach Events
 		for (var i = 0; i < _draggables.length; i++) {
 			_addEvent(_draggables[i], "mousedown", _onMouseDown);
