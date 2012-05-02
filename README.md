@@ -7,12 +7,12 @@ Aim to ease the difficulties in implementing drag n drop.
     Still  under development
 ## Loading the javscript file
 
-    (function(){
-      if(document.getElementById(id)) {
+    (function(d){
+      if(d.getElementById(id)) {
           var js,
         	id = "dragdrop-js",
-      		ref = document.getElementsByTagName('script')[0];
-      		js = document.createElement("script");
+      		ref = d.getElementsByTagName('script')[0];
+      		js = d.createElement("script");
       		js.id = id;
       		js.type = "text/javascript";
       		js.src = "/js/dragdrop/dragdrop.js";
@@ -33,4 +33,4 @@ Aim to ease the difficulties in implementing drag n drop.
       		}
       		ref.parentNode.insertBefore(js, ref);
       }
-    })()
+    })(document)
