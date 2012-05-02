@@ -18,15 +18,15 @@ A small javascript dragdrop library that handles drag n drop  and let you focus 
       			if (js.readyState === "loaded" || js.readyState === "complete") {
       				js.onreadystatechange = null;
         			DRAGDROP.onDragBegin = function (dragElement) {
-        	        //your code to run on drag begin
-              };
-            	DRAGDROP.onDrag = function (elementBelow, dragElement) {
-                  //your code to run on drag
-            	};
-            	DRAGDROP.onDrop = function (dropElement, dragElement) {
-                  //your code to run on drop
-            	};
-      			}
+        	            //your code to run on drag begin
+                    };
+            	    DRAGDROP.onDrag = function (elementBelow, dragElement) {
+                        //your code to run on drag
+            	    };
+            	    DRAGDROP.onDrop = function (dropElement, dragElement) {
+                        //your code to run on drop
+            	    };
+                }
       		}
       		ref.parentNode.insertBefore(js, ref);
       }
