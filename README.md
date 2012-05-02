@@ -1,5 +1,5 @@
-dragdrop
-========
+dragdropjs
+==========
 A small javascript library that handles drag n drop, letting you focus on your implementation details
 Provides cross-browser functionality, currently supporting ie7,ie8,ie9+,chrome, firefox, opera and safari
 Aim to ease the difficulties in implementing drag n drop.
