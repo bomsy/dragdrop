@@ -1,9 +1,8 @@
 dragdrop
 ========
-
 A small javascript dragdrop library that handles drag n drop  and let you focus on implementation details
 
-## Getting Started
+## Loading the javscript file
 
     (function(){
       if(document.getElementById(id)) {
