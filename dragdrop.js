@@ -11,15 +11,12 @@
 // v 1.0.2 - hbm - 23/04/2012 - ie7,ie8 support
 //**********************************************************
 if (!this.DRAGDROP) {
-	DRAGDROP = (function (e) {
+	this.DRAGDROP = (function (e) {
+		console.log(this);
 		e = e || window.event; //make sure the window event is set
 		var tagElements;
 		var _moveHorizontal = true,
 			_moveVertical = true;
-
-		onDragBegin = null;
-		onDrag = null;
-		onDrop = null;
 
 		var _draggables, _dropables,
 		_offsetX = 0, _offsetY = 0, //mouse pointer positions.
@@ -30,7 +27,6 @@ if (!this.DRAGDROP) {
 
 
 		_onMouseDown = function (e) {
-			console.log("mousedown");
 			var src = e.srcElement || e.target;
 			var style;
 			if (src.className === "drag") {
@@ -60,7 +56,6 @@ if (!this.DRAGDROP) {
 		};
 
 		_onMouseMove = function (e) {
-			console.log("mousemove")
 			var elementBelow = null;
 			if (_dragObject && _drag) {
 				if (_moveVertical) {
@@ -83,7 +78,6 @@ if (!this.DRAGDROP) {
 		};
 
 		_onMouseUp = function (e) {
-			console.log("mouseup");
 			var dropElement = null;
 			if (_dragObject && _drag) {
 				_positionDragElements(_dragObject, false);
@@ -155,7 +149,7 @@ if (!this.DRAGDROP) {
 			var arrs = [];
 			tagElements = document.getElementsByTagName("div");
 			for (var x = 0; x < tagElements.length; x++) {
-				if (tagElements[x].getAttribute("className")=== "drag") {
+				if (tagElements[x].getAttribute("className") === "drag") {
 					arrs.push(tagElements[x]);
 				}
 			}
@@ -167,9 +161,13 @@ if (!this.DRAGDROP) {
 			_positionDragElements(_draggables[i], false);
 		}
 		return {
+			onDragBegin: null,
+			onDrag: null,
+			onDrop: null,
 			moveHorizontal: function (value) {
 				if (value === true || value === false) {
 					_moveHorizontal = value;
+					return value;
 				} else {
 					throw new Error("moveHorizontal: The value must be boolean ");
 				}
@@ -177,6 +175,7 @@ if (!this.DRAGDROP) {
 			moveVertical: function (value) {
 				if (value === true || value === false) {
 					_moveVertical = value;
+					return value;
 				} else {
 					throw new Error("moveVertical: The value must be boolean ");
 				}
