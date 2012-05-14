@@ -12,20 +12,20 @@
 //**********************************************************
 if (!this.DRAGDROP) {
 	this.DRAGDROP = (function (e) {
-		console.log(this);
 		e = e || window.event; //make sure the window event is set
-		var tagElements;
-		var _moveHorizontal = true,
-			_moveVertical = true;
-
-		var _draggables, _dropables,
-		_offsetX = 0, _offsetY = 0, //mouse pointer positions.
-		_startX = 0, _startY = 0, //to store the start positions of the current source object;
+		var tagElements,
+		_moveHorizontal = true,
+		_moveVertical = true,
+		_draggables, 
+		_dropables,
+		_offsetX = 0, 
+		_offsetY = 0, //mouse pointer positions.
+		_startX = 0, 
+		_startY = 0, //to store the start positions of the current source object;
 		_dragObject = null,
 		_drag = false,
-		_selectObject = null;
-
-
+		_selectObject = null,
+		
 		_onMouseDown = function (e) {
 			var src = e.srcElement || e.target;
 			var style;
@@ -53,7 +53,7 @@ if (!this.DRAGDROP) {
 				_dragObject.focus();
 			}
 			return false;
-		};
+		},
 
 		_onMouseMove = function (e) {
 			var elementBelow = null;
@@ -75,7 +75,7 @@ if (!this.DRAGDROP) {
 				}
 			}
 			return false;
-		};
+		},
 
 		_onMouseUp = function (e) {
 			var dropElement = null;
@@ -95,18 +95,15 @@ if (!this.DRAGDROP) {
 				_dragObject = null;
 			}
 			return false;
-		};
-		_onClick = function (e) {
-
-		};
-
+		},
+		
 		_getElementBelowDrag = function (e, dragElement) {
 			var elmnt;
 			dragElement.style.display = "none";
 			elmnt = document.elementFromPoint(e.clientX, e.clientY);
 			dragElement.style.display = "block";
 			return elmnt;
-		};
+		},
 
 		_positionDragElements = function (element, dragState) {
 			var parent = element.parentNode;
@@ -122,7 +119,7 @@ if (!this.DRAGDROP) {
 			if (parent.style.position !== "relative") {
 				parent.style.position = "relative";
 			}
-		};
+		},
 		//custom event add and remove event actions
 		_addEvent = function (element, event, handler) {
 			if (document.attachEvent) {
@@ -130,7 +127,7 @@ if (!this.DRAGDROP) {
 			} else {
 				element.addEventListener(event, handler, false);
 			}
-		};
+		},
 
 		_removeEvent = function (element, event, handler) {
 			if (document.detachEvent) {
