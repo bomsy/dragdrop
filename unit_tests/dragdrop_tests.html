@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+		<title>YUI Tests</title>
+		<script src="http://yui.yahooapis.com/3.5.1/build/yui/yui-min.js"></script>		
+		<!-- Test File -->
+		<style type=text/css>
+			.drag{
+				width: 100px;
+				height: 50px;
+				border : 1px solid #ccc;
+				margin: 2px;
+				float:left;
+			}
+			#testlog{
+				float:left;
+				clear:both;
+				position:absolute;
+				top:200px;
+				left:20px;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<div id="node" class="drag"></div>
+		<div id="testlog"></div>
+		<script src="../dragdrop.js" type="text/javascript"></script>
+		<script type="text/javascript">
+		
+			YUI().use('event-simulate','node-event-simulate','test-console','test', function(Y){
+				var node  = Y.one("#node");
+    			node.simulate("mousedown", { clientX: 100, clientY: 100 });
+    			node.simulate("mouseup", { clientX: 100, clientY: 100 });
+    			node.simulate("mousemove", { clientX: 200, clientY: 200 });
+				var testCase = new Y.Test.Case({
+					name : "dragdropjs",
+					//*************************
+					// Special Instructions
+					//*************************
+					_should: {
+				        ignore: {
+
+				        },
+				        error: {
+				        	testMoveHorizontal: true,
+				            testMoveVertical: true
+				           }
+    				},
+    				
+					setUp : function(){
+						this.object = DRAGDROP;
+					},
+					
+					tearDown : function(){
+						delete this.object;
+					},
+					//*************************
+					// Test Cases
+					//*************************
+					testMoveHorizontal : function(){
+						this.object.moveHorizontal(10); //this should throw an error
+					},
+					
+					testMoveVertical : function(){
+						this.object.moveVertical('test'); //this should throw an error and pass
+					} 				});
+				//create the console
+				(new Y.Test.Console({
+					newestOnTop : false,
+					filters:{
+						pass : true,
+						fail: true
+					}
+				})).render("#testlog"); //output to the div
+				
+				Y.Test.Runner.add(testCase);
+				//run the tests
+				Y.Test.Runner.run();
+			});		
+		</script>
+	</body>
+</html>
+
