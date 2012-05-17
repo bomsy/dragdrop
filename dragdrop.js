@@ -11,7 +11,6 @@
 // v 1.0.2 - hbm - 23/04/2012 - ie7,ie8 support
 //**********************************************************
 if (!this.DRAGDROP) {
-<<<<<<< HEAD
 	this.DRAGDROP = (function (global) {
 		var e = global.event, //make sure the window event is set
 			body = global.document.body,
@@ -29,23 +28,6 @@ if (!this.DRAGDROP) {
 			_selectObject = null,
 			_dragParent = null,
 
-=======
-	this.DRAGDROP = (function (e) {
-		e = e || window.event; //make sure the window event is set
-		var tagElements,
-		_moveHorizontal = true,
-		_moveVertical = true,
-		_draggables, 
-		_dropables,
-		_offsetX = 0, 
-		_offsetY = 0, //mouse pointer positions.
-		_startX = 0, 
-		_startY = 0, //to store the start positions of the current source object;
-		_dragObject = null,
-		_drag = false,
-		_selectObject = null,
-		
->>>>>>> origin
 		_onMouseDown = function (e) {
 			var src = e.srcElement || e.target,
 				style, w, h;
@@ -109,7 +91,6 @@ if (!this.DRAGDROP) {
 			return false;
 		},
 
-<<<<<<< HEAD
 		 _onMouseUp = function (e) {
 		 	var dropElement = null;
 		 	if (_dragObject && _drag) {
@@ -134,28 +115,6 @@ if (!this.DRAGDROP) {
 		 	return false;
 		 },
 
-=======
-		_onMouseUp = function (e) {
-			var dropElement = null;
-			if (_dragObject && _drag) {
-				_positionDragElements(_dragObject, false);
-				dropElement = _getElementBelowDrag(e, _dragObject);
-				if (typeof DRAGDROP.onDrop === 'function') {
-					DRAGDROP.onDrop(dropElement, _dragObject);
-				}
-				_drag = false;
-				_startX = 0;
-				_startY = 0;
-				_offsetX = 0;
-				_offsetY = 0;
-				_removeEvent(_dragObject, "mousemove", _onMouseMove);
-				_removeEvent(_dragObject, "mouseup", _onMouseUp);
-				_dragObject = null;
-			}
-			return false;
-		},
-		
->>>>>>> origin
 		_getElementBelowDrag = function (e, dragElement) {
 			var elmnt;
 			dragElement.style.display = "none";
