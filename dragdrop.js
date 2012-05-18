@@ -38,18 +38,13 @@ if (!this.DRAGDROP) {
 				//cache width & height
 				w = style.getPropertyValue("width");
 				h = style.getPropertyValue("height");
-				_dragParent.removeChild(_dragObject);
-				body.appendChild(_dragObject);
-
-				_dragObject.style.width = w;
-				_dragObject.style.height = h;
 
 				_offsetX = e.clientX;
 				_offsetY = e.clientY;
 
 				if (typeof _dragObject.currentStyle !== "undefined") {
-					_startX = parseInt(_dragObject.currentStyle.left); //ie
-					_startY = parseInt(_dragObject.currentStyle.top); //ie
+					_startX = _getActualLeft(_dragObject); //ie
+					_startY = _getActualTop(_dragObject); //ie
 				} else {
 					_startX = parseInt(style.getPropertyValue("left")); //chrome
 					_startY = parseInt(style.getPropertyValue("top")); //chrome
@@ -61,6 +56,16 @@ if (!this.DRAGDROP) {
 				if (typeof DRAGDROP.onDragBegin === 'function') {
 					DRAGDROP.onDragBegin(_dragObject);
 				}
+				//grab the dragObject for the drag operation
+				_dragParent.removeChild(_dragObject);
+				body.appendChild(_dragObject);
+				//preserve the width and height for the drag
+				_dragObject.style.width = w;
+				_dragObject.style.height = h;
+
+				_dragObject.style.left = _startX + "px";
+				_dragObject.style.top = _startY + "px";
+
 				_dragObject.focus();
 			}
 
@@ -71,16 +76,14 @@ if (!this.DRAGDROP) {
 			var elementBelow = null;
 			if (_dragObject && _drag) {
 				if (_moveVertical) {
-					//_dragObject.style.top = (e.clientY - _offsetY) + _startY + 'px';
-					_dragObject.style.top = (e.clientY - body.scrollTop - 25) + "px"; //look at constant
+					_dragObject.style.top = (e.clientY - _offsetY) + _startY + 'px';
 				} else {
-					_dragObject.style.top = (_offsetY - body.scrollTop - 25) + "px";
+					_dragObject.style.top = _startY + "px";
 				}
 				if (_moveHorizontal) {
-					//_dragObject.style.left = (e.clientX - _offsetX) + _startX + 'px';
-					_dragObject.style.left = (e.clientX - body.scrollLeft - 105) + "px"; //look at constant
+					_dragObject.style.left = (e.clientX - _offsetX) + _startX + 'px';
 				} else {
-					_dragObject.style.left = (_offsetX - body.scrollLeft - 105) + "px";
+					_dragObject.style.left = _startX + "px";
 				}
 				_dragObject.focus();
 				elementBelow = _getElementBelowDrag(e, _dragObject);
@@ -173,15 +176,42 @@ if (!this.DRAGDROP) {
 				_draggables = arrs;
 			}
 		},
-
 		_attachAndPosition = function () {
 			//attach Events
+			_addEvent(_topmostParent(document), "mousedown", _onMouseDown);
 			for (var i = 0; i < _draggables.length; i++) {
-				_addEvent(_draggables[i], "mousedown", _onMouseDown);
+				//_addEvent(_draggables[i], "mousedown", _onMouseDown);
 				_positionDragElements(_draggables[i], false);
 			}
 		},
-
+		_topmostParent = function () {
+			var a = [],
+				l,
+				o;
+			a = document.getElementsByClassName("drag");
+			l = a.length;
+			o = a[l - 1];
+			console.log(o.id);
+			return o.parentNode;
+		},
+		_getActualTop = function (element) {
+			var top = element.offsetTop,
+				p = element.offsetParent;
+			while (p) {
+				top += p.offsetTop;
+				p = p.offsetParent;
+			}
+			return top;
+		},
+		_getActualLeft = function (element) {
+			var left = element.offsetLeft,
+				p = element.offsetParent;
+			while (p) {
+				left += p.offsetLeft;
+				p = p.offsetParent;
+			}
+			return left;
+		},
 		_initialize = function () {
 			_checkAndSetDraggables();
 			_attachAndPosition();
