@@ -27,8 +27,10 @@ if (!this.DRAGDROP) {
 			_drag = false,
 			_selectObject = null,
 			_dragParent = null,
+			_clone = null,
 
 		_onMouseDown = function (e) {
+			console.log("down");
 			var src = e.srcElement || e.target,
 				style, w, h;
 			if (src.className === "drag") {
@@ -42,51 +44,55 @@ if (!this.DRAGDROP) {
 				_offsetX = e.clientX;
 				_offsetY = e.clientY;
 
+				//grab the dragObject for the drag operation
 				if (typeof _dragObject.currentStyle !== "undefined") {
-					_startX = _getActualLeft(_dragObject); //ie
-					_startY = _getActualTop(_dragObject); //ie
+					_startX = _getActualLeft(_dragObject) - _dragObject.parentNode.scrollLeft; //ie
+					_startY = _getActualTop(_dragObject) - _dragObject.parentNode.scrollTop; //ie
 				} else {
 					_startX = parseInt(style.getPropertyValue("left")); //chrome
 					_startY = parseInt(style.getPropertyValue("top")); //chrome
 				}
 				_drag = true;
-				_positionDragElements(_dragObject, true); //move element up
 				_addEvent(document.body, "mousemove", _onMouseMove);
 				_addEvent(document.body, "mouseup", _onMouseUp);
+
+
+
 				if (typeof DRAGDROP.onDragBegin === 'function') {
 					DRAGDROP.onDragBegin(_dragObject);
 				}
-				//grab the dragObject for the drag operation
+
 				_dragParent.removeChild(_dragObject);
-				body.appendChild(_dragObject);
+				_clone = _dragObject.cloneNode(true);
+				body.appendChild(_clone);
+				_positionDragElements(_clone, true);
 				//preserve the width and height for the drag
-				_dragObject.style.width = w;
-				_dragObject.style.height = h;
-
-				_dragObject.style.left = _startX + "px";
-				_dragObject.style.top = _startY + "px";
-
-				_dragObject.focus();
+				_clone.style.width = w;
+				_clone.style.height = h;
+				_clone.style.left = _startX + "px";
+				_clone.style.top = _startY + "px";
+				_clone.focus();
 			}
 
 			return false;
 		},
 
 		_onMouseMove = function (e) {
+			console.log("move");
 			var elementBelow = null;
-			if (_dragObject && _drag) {
+			if (_dragObject && _clone && _drag) {
 				if (_moveVertical) {
-					_dragObject.style.top = (e.clientY - _offsetY) + _startY + 'px';
+					_clone.style.top = (e.clientY - _offsetY) + _startY + 'px';
 				} else {
-					_dragObject.style.top = _startY + "px";
+					_clone.style.top = _startY + "px";
 				}
 				if (_moveHorizontal) {
-					_dragObject.style.left = (e.clientX - _offsetX) + _startX + 'px';
+					_clone.style.left = (e.clientX - _offsetX) + _startX + 'px';
 				} else {
-					_dragObject.style.left = _startX + "px";
+					_clone.style.left = _startX + "px";
 				}
-				_dragObject.focus();
-				elementBelow = _getElementBelowDrag(e, _dragObject);
+				_clone.focus();
+				elementBelow = _getElementBelowDrag(e, _clone);
 				if (typeof DRAGDROP.onDrag === 'function') {
 					DRAGDROP.onDrag(elementBelow, _dragObject);
 				}
@@ -96,13 +102,11 @@ if (!this.DRAGDROP) {
 
 		 _onMouseUp = function (e) {
 		 	var dropElement = null;
-		 	if (_dragObject && _drag) {
+		 	if (_dragObject && _clone && _drag) {
 		 		_positionDragElements(_dragObject, false);
-		 		dropElement = _getElementBelowDrag(e, _dragObject);
-		 		if (_dragParent !== null) {
-		 			body.removeChild(_dragObject);
-		 			dropElement.appendChild(_dragObject);
-		 		}
+		 		dropElement = _getElementBelowDrag(e, _clone);
+		 		dropElement.appendChild(_dragObject);
+		 		body.removeChild(_clone);
 		 		if (typeof DRAGDROP.onDrop === 'function') {
 		 			DRAGDROP.onDrop(dropElement, _dragObject);
 		 		}
@@ -130,17 +134,12 @@ if (!this.DRAGDROP) {
 			var parent = element.parentNode;
 			if (dragState) {
 				element.style.opacity = "0.5";
-				element.style.zIndex = 1000;
 				element.style.position = "absolute";
 			} else {
 				element.style.opacity = "1.0";
-				element.style.zIndex = 500;
 				element.style.position = "static";
 			}
 			element.style.cursor = "move";
-			if (parent.style.position !== "relative") {
-				parent.style.position = "relative";
-			}
 		},
 		//custom event add and remove event actions
 		_addEvent = function (element, event, handler) {
@@ -178,9 +177,8 @@ if (!this.DRAGDROP) {
 		},
 		_attachAndPosition = function () {
 			//attach Events
-			_addEvent(_topmostParent(document), "mousedown", _onMouseDown);
 			for (var i = 0; i < _draggables.length; i++) {
-				//_addEvent(_draggables[i], "mousedown", _onMouseDown);
+				_addEvent(_draggables[i], "mousedown", _onMouseDown);
 				_positionDragElements(_draggables[i], false);
 			}
 		},
